@@ -1,0 +1,80 @@
+version: '2.4'
+
+services:
+  dynamo-customers:
+    image: amazon/dynamodb-local
+    container_name: dynamo-customers
+    mem_limit: 512M
+    ports:
+      - 8000:8000
+
+  dynamo-vets:
+    image: amazon/dynamodb-local
+    container_name: dynamo-vets
+    mem_limit: 512M
+    ports:
+      - 8001:8000
+
+  dynamo-visits:
+    image: amazon/dynamodb-local
+    container_name: dynamo-visits
+    mem_limit: 512M
+    ports:
+      - 8002:8000
+
+  discovery-service:
+    image: eureka-service-discovery
+    container_name: discovery-service
+    mem_limit: 512M
+    entrypoint: ["dockerize","--","java", "-XX:+UnlockExperimentalVMOptions", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+    ports:
+      - 8761:8761
+
+  customers-service:
+    image: petclinic-customers-service
+    container_name: customers-service
+    mem_limit: 512M
+    depends_on:
+      - dynamo-customers
+      - discovery-service
+    entrypoint: ["dockerize","-wait=tcp://discovery-service:8761","-timeout=60s","--","java", "-XX:+UnlockExperimentalVMOptions", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  vets-service:
+    image: petclinic-vets-service
+    container_name: vets-service
+    mem_limit: 512M
+    depends_on:
+      - dynamo-vets
+      - discovery-service
+    entrypoint: ["dockerize","-wait=tcp://discovery-service:8761","-timeout=60s","--","java", "-XX:+UnlockExperimentalVMOptions", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+    ports:
+      - 8082:8082
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  visits-service:
+    image: petclinic-visits-service
+    container_name: visits-service
+    mem_limit: 512M
+    depends_on:
+      - dynamo-visits
+      - discovery-service
+    entrypoint: ["dockerize","-wait=tcp://discovery-service:8761","-timeout=60s","--","java", "-XX:+UnlockExperimentalVMOptions", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+    ports:
+      - 8083:8083
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  zuul-api-gateway:
+    image: petclinic-zuul-gateway
+    container_name: zuul-gateway
+    mem_limit: 512M
+    depends_on:
+      - discovery-service
+    entrypoint: ["dockerize","-wait=tcp://discovery-service:8761","-timeout=60s","--","java", "-XX:+UnlockExperimentalVMOptions", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+    ports:
+      - 8090:8090
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker

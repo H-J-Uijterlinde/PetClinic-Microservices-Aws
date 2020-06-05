@@ -1,0 +1,46 @@
+plugins {
+	id 'org.springframework.boot' version '2.2.7.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+	id 'com.google.cloud.tools.jib' version '2.2.0'
+}
+
+group = 'com.semafoor.petclinic'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:2.2.2.RELEASE'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	compile group: 'org.springframework.data', name: 'spring-data-releasetrain', version: 'Moore-SR7', ext: 'pom'
+	compile 'com.amazonaws:aws-java-sdk-dynamodb:1.11.777'
+	compile 'com.github.derjust:spring-data-dynamodb:5.1.0'
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	compile 'com.google.guava:guava:29.0-jre'
+
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+
+test {
+	useJUnitPlatform()
+}
+
+//tasks.build.dependsOn tasks.jibDockerBuild
