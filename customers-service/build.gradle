@@ -24,8 +24,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:2.2.2.RELEASE'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.cloud:spring-cloud-config-client'
 
-	compile group: 'org.springframework.data', name: 'spring-data-releasetrain', version: 'Moore-SR7', ext: 'pom'
+
+			compile group: 'org.springframework.data', name: 'spring-data-releasetrain', version: 'Moore-SR7', ext: 'pom'
 	compile 'com.amazonaws:aws-java-sdk-dynamodb:1.11.777'
 	compile 'com.github.derjust:spring-data-dynamodb:5.1.0'
 

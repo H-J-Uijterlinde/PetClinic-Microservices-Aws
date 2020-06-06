@@ -1,4 +1,4 @@
-version: '2.4'
+version: '2.2'
 
 services:
   dynamo-customers:
@@ -21,6 +21,11 @@ services:
     mem_limit: 512M
     ports:
       - 8002:8000
+
+  config-server:
+    image: petclinic-config-server
+    container_name: config-server
+    mem_limit: 512M
 
   discovery-service:
     image: eureka-service-discovery
